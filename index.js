@@ -10,6 +10,24 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+//Verify JWT
+function verifyJWT(req, res, next) {
+     const authHeader = req.headers.authorization;
+   
+     if (!authHeader) {
+       return res.status(401).send({ message: 'Unauthorized access' })
+     }
+     const token = authHeader.split(' ')[1]
+   
+     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+       if (err) {
+         return res.status(403).send({ message: 'Forbidden access' })
+       }
+       req.decoded = decoded
+       next()
+     })
+   }
+
 
 const uri = process.env.URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -36,7 +54,27 @@ async function run(){
                  expiresIn: '1d',
                })
                res.send({ result, token })
-             })
+          })
+
+          // Get JWT on login
+          app.post('/jwt', (req, res)=>{
+               const user = req.body;
+               const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+               res.send({token})
+          })
+
+          // Get single user
+          app.get(`/user/:email`,verifyJWT, async(req, res)=>{
+               const email = req.params.email
+               const decodedEmail = req.decoded.email
+               console.log(email, decodedEmail);
+               if (email !== decodedEmail) {
+                    return res.status(403).send({ message: 'Forbidden access' })
+               }
+               const query = { email: email }
+               const user = await UsersCollection.findOne(query)
+               res.send(user)
+          })
 
           // Get categories
           app.get('/categories', async(req, res)=>{
