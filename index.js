@@ -17,6 +17,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
      try{
           const UsersCollection = client.db("OldRuby-DB").collection("users");
+          const CategoriesCollection = client.db("OldRuby-DB").collection("categories");
+          const ProductsCollection = client.db("OldRuby-DB").collection("products");
 
           //Add user in DB & get JWT
           app.put('/user/:email', async (req, res) => {
@@ -35,8 +37,20 @@ async function run(){
                res.send({ result, token })
              })
 
-          // ..........
+          // Get categories
+          app.get('/categories', async(req, res)=>{
+               const query = {};
+               const result = await CategoriesCollection.find(query).toArray();
+               res.send(result);
+          })
           
+          // Get products by category
+          app.get('/category/:categoryName', async(req, res)=>{
+               const categoryName = req.params.categoryName;
+               const query = {category: categoryName};
+               const result = await ProductsCollection.find(query).toArray()
+               res.send(result)
+          })
      }
      finally{
 
