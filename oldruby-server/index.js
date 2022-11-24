@@ -17,6 +17,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
      try{
           const UsersCollection = client.db("OldRuby-DB").collection("users");
+
+          //Add user in DB & get JWT
           app.put('/user/:email', async (req, res) => {
                const email = req.params.email
                const user = req.body;
@@ -32,6 +34,9 @@ async function run(){
                })
                res.send({ result, token })
              })
+
+          // ..........
+          
      }
      finally{
 
