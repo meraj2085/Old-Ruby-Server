@@ -19,6 +19,7 @@ async function run(){
           const UsersCollection = client.db("OldRuby-DB").collection("users");
           const CategoriesCollection = client.db("OldRuby-DB").collection("categories");
           const ProductsCollection = client.db("OldRuby-DB").collection("products");
+          const BookingsCollection = client.db("OldRuby-DB").collection("bookings");
 
           //Add user in DB & get JWT
           app.put('/user/:email', async (req, res) => {
@@ -49,6 +50,13 @@ async function run(){
                const categoryName = req.params.categoryName;
                const query = {category: categoryName};
                const result = await ProductsCollection.find(query).toArray()
+               res.send(result)
+          })
+
+          // Add booking
+          app.put('/booking', async(req, res)=>{
+               const booking = req.body;
+               const result = await BookingsCollection.insertOne(booking);
                res.send(result)
           })
      }
