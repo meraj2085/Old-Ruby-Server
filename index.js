@@ -75,6 +75,14 @@ async function run(){
                res.send(user)
           })
 
+          // Get user verification
+          app.get(`/verification/:email`, async(req, res)=>{
+               const email = req.params.email;
+               const query = { email: email }
+               const user = await UsersCollection.findOne(query)
+               res.send(user?.seller_verification)
+          })
+
           // Get categories
           app.get('/categories', async(req, res)=>{
                const query = {};
