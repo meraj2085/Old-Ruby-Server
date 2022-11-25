@@ -97,6 +97,13 @@ async function run(){
                const result = await BookingsCollection.insertOne(booking);
                res.send(result)
           })
+
+          // Add product
+          app.put('/product', async(req, res)=>{
+               const product = req.body;
+               const result = await ProductsCollection.insertOne(product)
+               res.send(result)
+          })
      }
      finally{
 
