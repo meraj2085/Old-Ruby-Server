@@ -156,13 +156,31 @@ async function run(){
                res.send(result);
           });
 
-          // Get all sellers
+          // Get sellers / buyers
           app.get('/users', async(req, res)=>{
                const role = req.query.role;
                const filter = { role: role }
                const result = await UsersCollection.find(filter).toArray();
                res.send(result);
           })
+
+          // Report a product
+          app.put("/product/report/:id", async (req, res) => {
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const options = { upsert: true };
+               const updatedDoc = {
+                 $set: {
+                    reported: true,
+                 },
+               };
+               const result = await ProductsCollection.updateOne(
+                 filter,
+                 updatedDoc,
+                 options
+               );
+               res.send(result);
+          });
      }
      finally{
 
