@@ -188,6 +188,22 @@ async function run(){
                const result = await ProductsCollection.find(filter).toArray();
                res.send(result)
           })
+
+          // Get booked products
+          app.get('/booked', async(req, res)=>{
+               const email = req.query.email;
+               const filter = { buyer_email: email };
+               const result = await BookingsCollection.find(filter).toArray();
+               res.send(result)
+          })
+
+          // Delete booking
+          app.delete('/booking/:id', async(req, res)=>{
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const result = await BookingsCollection.deleteOne(filter);
+               res.send(result);
+          })
      }
      finally{
 
