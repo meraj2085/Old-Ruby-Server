@@ -155,6 +155,14 @@ async function run(){
                );
                res.send(result);
           });
+
+          // Get all sellers
+          app.get('/users', async(req, res)=>{
+               const role = req.query.role;
+               const filter = { role: role }
+               const result = await UsersCollection.find(filter).toArray();
+               res.send(result);
+          })
      }
      finally{
 
