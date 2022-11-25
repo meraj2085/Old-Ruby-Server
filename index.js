@@ -181,6 +181,13 @@ async function run(){
                );
                res.send(result);
           });
+
+          // Get reported items
+          app.get('/product/reported', async(req, res)=>{
+               const filter = { reported: true}
+               const result = await ProductsCollection.find(filter).toArray();
+               res.send(result)
+          })
      }
      finally{
 
