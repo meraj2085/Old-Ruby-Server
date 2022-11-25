@@ -137,6 +137,24 @@ async function run(){
                const result = await ProductsCollection.deleteOne(filter);
                res.send(result);
           });
+
+          // Update advertise product status
+          app.put("/product/update/:id", async (req, res) => {
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const options = { upsert: true };
+               const updatedDoc = {
+                 $set: {
+                    advertised: true,
+                 },
+               };
+               const result = await ProductsCollection.updateOne(
+                 filter,
+                 updatedDoc,
+                 options
+               );
+               res.send(result);
+          });
      }
      finally{
 
