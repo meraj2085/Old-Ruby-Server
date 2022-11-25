@@ -129,6 +129,14 @@ async function run(){
                );
                res.send(result);
           });
+
+          // Delete product
+          app.delete("/product/:id", async (req, res) => {
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const result = await ProductsCollection.deleteOne(filter);
+               res.send(result);
+          });
      }
      finally{
 
