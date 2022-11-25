@@ -213,6 +213,12 @@ async function run(){
                res.send(result);
           });
           
+          // Get advertised products
+          app.get('/advertised', async(req, res)=>{
+               const filter = {advertised: true, status: 'available'}
+               const result = await ProductsCollection.find(filter).toArray();
+               res.send(result);
+          })
      }
      finally{
 
