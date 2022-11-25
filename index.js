@@ -219,6 +219,26 @@ async function run(){
                const result = await ProductsCollection.find(filter).toArray();
                res.send(result);
           })
+
+          // Update seller verification status
+          app.put('/verificationStatus', async(req, res)=>{
+               const email = req.query.email;
+               const filter = { email: email }
+               const query = { seller_email: email }
+               const options = { upsert: true };
+               const updatedDoc = {
+                 $set: {
+                    seller_verification: true,
+                 },
+               };
+               const result = await UsersCollection.updateOne(
+                    filter,
+                    updatedDoc,
+                    options
+                  );
+               const productResult = await ProductsCollection.updateMany(query, updatedDoc, options)
+               res.send({result, productResult});
+          })
      }
      finally{
 
