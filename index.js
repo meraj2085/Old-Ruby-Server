@@ -197,13 +197,22 @@ async function run(){
                res.send(result)
           })
 
+          // Get single booking
+          app.get('/booked/:id', async(req, res)=>{
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const result = await BookingsCollection.findOne(filter);
+               res.send(result)
+          })
+
           // Delete booking
           app.delete('/booking/:id', async(req, res)=>{
                const id = req.params.id;
                const filter = { _id: ObjectId(id) };
                const result = await BookingsCollection.deleteOne(filter);
                res.send(result);
-          })
+          });
+          
      }
      finally{
 
