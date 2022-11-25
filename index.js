@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 var jwt = require('jsonwebtoken');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // Middleware
@@ -66,8 +66,7 @@ async function run(){
           // Get single user
           app.get(`/user/:email`,verifyJWT, async(req, res)=>{
                const email = req.params.email
-               const decodedEmail = req.decoded.email
-               console.log(email, decodedEmail);
+               const decodedEmail = req.decoded.email;
                if (email !== decodedEmail) {
                     return res.status(403).send({ message: 'Forbidden access' })
                }
@@ -104,6 +103,32 @@ async function run(){
                const result = await ProductsCollection.insertOne(product)
                res.send(result)
           })
+
+          // Get seller product
+          app.get('/products', async(req, res)=>{
+               const email = req.query.email
+               const query = {seller_email: email}
+               const result = await ProductsCollection.find(query).toArray();
+               res.send(result)
+          })
+
+          // Update product status
+          app.put("/product/:id", async (req, res) => {
+               const id = req.params.id;
+               const filter = { _id: ObjectId(id) };
+               const options = { upsert: true };
+               const updatedDoc = {
+                 $set: {
+                   status: "sold",
+                 },
+               };
+               const result = await ProductsCollection.updateOne(
+                 filter,
+                 updatedDoc,
+                 options
+               );
+               res.send(result);
+          });
      }
      finally{
 
