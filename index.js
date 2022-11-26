@@ -274,13 +274,17 @@ async function run(){
                const product_id = payment.product_id;
                const filter  = { _id: ObjectId(bookingId) }
                const query = { _id: ObjectId(product_id) }
+               const bookingStatusQuery = { product_id:product_id }
 
                const updatedDoc = {$set: {payment: true, transactionId: payment.transactionId}};
                const productUpdatedDoc = {$set: {status: 'sold'}};
+               const bookingUpdatedDoc = {$set: {status: 'sold'}};
 
                const updateResult = await BookingsCollection.updateOne(filter, updatedDoc)
                const productUpdatedResult = await ProductsCollection.updateOne(query, productUpdatedDoc)
-               res.send({updateResult, productUpdatedDoc})
+               const bookingUpdateResult = await BookingsCollection.updateMany(bookingStatusQuery, bookingUpdatedDoc);
+               
+               res.send({updateResult, productUpdatedDoc, bookingUpdateResult})
           })
      }
      finally{
