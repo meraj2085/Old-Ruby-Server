@@ -106,6 +106,14 @@ async function run(){
                res.send(result)
           })
 
+          // Get single product
+          app.get('/product/:id', async(req, res)=>{
+               const id = req.params.id;
+               const query = { _id: ObjectId(id) };
+               const result = await ProductsCollection.findOne(query);
+               res.send(result);
+          })
+
           // Add product
           app.put('/product',verifyJWT, async(req, res)=>{
                const product = req.body;
