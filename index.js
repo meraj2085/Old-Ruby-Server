@@ -94,7 +94,7 @@ async function run(){
           // Get products by category
           app.get('/category/:categoryName', async(req, res)=>{
                const categoryName = req.params.categoryName;
-               const query = {category: categoryName};
+               const query = {category: categoryName, status: 'available'};
                const result = await ProductsCollection.find(query).toArray()
                res.send(result)
           })
