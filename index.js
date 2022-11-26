@@ -107,14 +107,14 @@ async function run(){
           })
 
           // Add product
-          app.put('/product', async(req, res)=>{
+          app.put('/product',verifyJWT, async(req, res)=>{
                const product = req.body;
                const result = await ProductsCollection.insertOne(product)
                res.send(result)
           })
 
           // Get seller product
-          app.get('/products', async(req, res)=>{
+          app.get('/products',verifyJWT, async(req, res)=>{
                const email = req.query.email
                const query = {seller_email: email}
                const result = await ProductsCollection.find(query).toArray();
@@ -145,7 +145,7 @@ async function run(){
           });
 
           // Update advertise product status
-          app.put("/product/update/:id", async (req, res) => {
+          app.put("/product/update/:id",verifyJWT, async (req, res) => {
                const id = req.params.id;
                const filter = { _id: ObjectId(id) };
                const options = { upsert: true };
@@ -163,7 +163,7 @@ async function run(){
           });
 
           // Get sellers / buyers
-          app.get('/users', async(req, res)=>{
+          app.get('/users',verifyJWT, async(req, res)=>{
                const role = req.query.role;
                const filter = { role: role }
                const result = await UsersCollection.find(filter).toArray();
@@ -196,7 +196,7 @@ async function run(){
           })
 
           // Get booked products
-          app.get('/booked', async(req, res)=>{
+          app.get('/booked',verifyJWT, async(req, res)=>{
                const email = req.query.email;
                const filter = { buyer_email: email };
                const result = await BookingsCollection.find(filter).toArray();
