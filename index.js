@@ -143,8 +143,10 @@ async function run(){
           app.delete("/product/:id", async (req, res) => {
                const id = req.params.id;
                const filter = { _id: ObjectId(id) };
+               const query = { product_id: id }
                const result = await ProductsCollection.deleteOne(filter);
-               res.send(result);
+               const bookingDeleteResult = await BookingsCollection.deleteMany(query)
+               res.send({result, bookingDeleteResult});
           });
 
           // Update advertise product status
@@ -283,7 +285,7 @@ async function run(){
                const updateResult = await BookingsCollection.updateOne(filter, updatedDoc)
                const productUpdatedResult = await ProductsCollection.updateOne(query, productUpdatedDoc)
                const bookingUpdateResult = await BookingsCollection.updateMany(bookingStatusQuery, bookingUpdatedDoc);
-               
+
                res.send({updateResult, productUpdatedDoc, bookingUpdateResult})
           })
      }
