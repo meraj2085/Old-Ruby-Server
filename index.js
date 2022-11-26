@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 var jwt = require('jsonwebtoken');
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -246,6 +247,40 @@ async function run(){
                   );
                const productResult = await ProductsCollection.updateMany(query, updatedDoc, options)
                res.send({result, productResult});
+          })
+
+          // Get payment intent
+          app.post('/create-payment-intent', async (req, res) => {
+               const booking = req.body;
+               const price = booking.item_price;
+               const amount = price * 100;
+     
+               const paymentIntent = await stripe.paymentIntents.create({
+               currency: 'usd',
+               amount: amount,
+               "payment_method_types": [
+                    "card"
+               ]
+               });
+               res.send({
+               clientSecret: paymentIntent.client_secret,
+               });
+          });
+
+          // Update status after payment
+          app.post('/payment', async(req, res)=>{
+               const payment = req.body;
+               const bookingId = payment.bookingId;
+               const product_id = payment.product_id;
+               const filter  = { _id: ObjectId(bookingId) }
+               const query = { _id: ObjectId(product_id) }
+
+               const updatedDoc = {$set: {payment: true, transactionId: payment.transactionId}};
+               const productUpdatedDoc = {$set: {status: 'sold'}};
+
+               const updateResult = await BookingsCollection.updateOne(filter, updatedDoc)
+               const productUpdatedResult = await ProductsCollection.updateOne(query, productUpdatedDoc)
+               res.send({updateResult, productUpdatedDoc})
           })
      }
      finally{
