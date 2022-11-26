@@ -125,17 +125,12 @@ async function run(){
           app.put("/product/:id", async (req, res) => {
                const id = req.params.id;
                const filter = { _id: ObjectId(id) };
+               const bookingStatusQuery = { product_id: id }
                const options = { upsert: true };
-               const updatedDoc = {
-                 $set: {
-                   status: "sold",
-                 },
-               };
-               const result = await ProductsCollection.updateOne(
-                 filter,
-                 updatedDoc,
-                 options
-               );
+               const updatedDoc = {$set: {status: "sold",}};
+
+               const bookingUpdateResult = await BookingsCollection.updateMany(bookingStatusQuery, updatedDoc);
+               const result = await ProductsCollection.updateOne(filter,updatedDoc,options);
                res.send(result);
           });
 
