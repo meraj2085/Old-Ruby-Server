@@ -197,10 +197,10 @@ async function run(){
           });
 
           // Get reported items
-          app.get('/product/reported', async(req, res)=>{
-               const filter = { reported: true}
+          app.get('/reported', async(req, res)=>{
+               const filter = {reported: true}
                const result = await ProductsCollection.find(filter).toArray();
-               res.send(result)
+               res.send(result);
           })
 
           // Get booked products
