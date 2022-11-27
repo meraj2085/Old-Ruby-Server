@@ -40,6 +40,18 @@ async function run(){
           const ProductsCollection = client.db("OldRuby-DB").collection("products");
           const BookingsCollection = client.db("OldRuby-DB").collection("bookings");
 
+          // Verify seller
+          const verifySeller = async (req, res, next) => {
+               const decodedEmail = req.decoded.email
+               const query = { email: decodedEmail }
+               const user = await UsersCollection.findOne(query)
+         
+               if (user?.role !== 'Seller') {
+                 return res.status(403).send({ message: 'forbidden access' })
+               }
+               next()
+             }
+
           //Add user in DB & get JWT
           app.put('/user/:email', async (req, res) => {
                const email = req.params.email
@@ -115,7 +127,7 @@ async function run(){
           })
 
           // Add product
-          app.put('/product',verifyJWT, async(req, res)=>{
+          app.put('/product',verifyJWT, verifySeller, async(req, res)=>{
                const product = req.body;
                const result = await ProductsCollection.insertOne(product)
                res.send(result)
