@@ -125,6 +125,11 @@ async function run(){
                const result = await ProductsCollection.findOne(query);
                res.send(result);
           })
+          
+          app.get('/all_products', async(req, res)=>{
+               const result = await ProductsCollection.find().toArray();
+               res.send(result);
+          })
 
           // Add product
           app.put('/product',verifyJWT, verifySeller, async(req, res)=>{
